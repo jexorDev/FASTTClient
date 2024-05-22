@@ -1,0 +1,40 @@
+:root {
+  font-family: 'Courier New', Courier, monospace;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #000000;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  position: relative;
+}
+
+a {
+  font-weight: 500;
+  color: orange;
+  text-decoration: inherit;
+}
+a:hover {
+  color: peachpuff;
+  cursor: pointer;
+}
+.selected {
+  color: orangered;
+  cursor: pointer;
+}
+input[type=text] {
+  border:none;
+  outline: none;
+  background:transparent;
+  color: limegreen;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+}

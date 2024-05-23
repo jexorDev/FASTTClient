@@ -4,6 +4,7 @@ import axios from 'axios';
 import Flight from "../models/Flight.js";
 import GetFlightsResponseBody from '../models/GetFlightsResposneBody.js';
 import ResultSetCache from '../models/ResultSetCache.js';
+import {buildFlightAwareLink} from "../utility/FlightInfoUtility";
 
 function loadFlights()  {
   if (previousSearchResults.value.has(terminalQuery.value)) {
@@ -44,10 +45,6 @@ function executePreviousSearch(query: string) {
 function formatTime(date: Date): string {
   if (!date) return "";
   return new Date(date).toLocaleTimeString('en-us', { hour: "2-digit", minute: "2-digit"})
-}
-
-function buildFlightAwareLink(airline: string, flightNumber: string): string {
-  return `https://flightaware.com/live/flight/${airline}${flightNumber}`;
 }
 
 function parseQueryString(queryString: string): string {

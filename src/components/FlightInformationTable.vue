@@ -18,7 +18,7 @@ function loadFlights()  {
   fromDate.setDate(fromDate.getDate() + dateOffset);
   toDate.setDate(toDate.getDate() + dateOffset);
 
-  axios.get(`${import.meta.env.VITE_API_BASE_URL}/RawFlightData?dispositionType=${disposition.value}&fromDateTime=${fromDate.toISOString()}&toDateTime=${toDate.toISOString()}&airline=${airline.value}&city=${city.value}&includeCodesharePartners=${includeCodesharePartners.value}`).then((response) => {        
+  axios.get(`${import.meta.env.VITE_API_BASE_URL}/FlightData?dispositionType=${disposition.value}&flightNumber=${flightNumber.value}&fromDateTime=${fromDate.toISOString()}&toDateTime=${toDate.toISOString()}&airline=${airline.value}&city=${city.value}&includeCodesharePartners=${includeCodesharePartners.value}`).then((response) => {        
     flights.value = response.data as Flight[];      
   }).finally(() => loading.value = false);
 }
@@ -46,7 +46,11 @@ function getDateTimeFromString(timeString: string): Date  {
     return date;
 }
 
+function getCodesharePartnersString(partners: string[]): string {
+  const partnersJoined = partners.join(" | ");
 
+  return partnersJoined === "" ? "" : ` | ${partnersJoined}`;
+}
 
 const flights = ref<Flight[]>([]);
 const disposition = ref(1);
@@ -55,6 +59,7 @@ const city = ref("");
 const timeFrom = ref("00:00");
 const timeTo = ref("23:59");
 const dayType = ref("TODAY");
+const flightNumber = ref("");
 const includeCodesharePartners = ref(false);
 const problemAirlinesOnly = ref(false);
 
@@ -73,27 +78,29 @@ const numberResults = computed<number>(() => flights.value.length);
     <table style="display: inline;">
       <tr>
         <th>
-          DISPOSITION:
+          DISPOSITION
         </th>
         <th>
-          DAY:
+          DAY
+        </th>
+        <th>FLIGHT #</th>
+        <th>
+          {{ disposition === 1 ? "FROM" : "TO" }}
+        </th>
+        
+        <th>
+          AIRLINE
         </th>
         <th>
-          TO/FROM:
+          TIME FROM
         </th>
         <th>
-          AIRLINE:
+          TIME TO
         </th>
         <th>
-          TIME FROM:
-        </th>
-        <th>
-          TIME TO:
-        </th>
-        <th>
-          INCLUDE CODESHARE PARTNERS:
+          INCLUDE CODESHARE PARTNERS
           </th>
-          <th>PROBLEM AIRLINES VIEW:</th>
+          <th>PROBLEM AND RESOLUTION VIEW</th>
         
       </tr>
       <tr>
@@ -110,6 +117,9 @@ const numberResults = computed<number>(() => flights.value.length);
             <option>TOMORROW</option>
             <option>YESTERDAY</option>
           </select>
+        </td>
+        <td>
+          <input v-model="flightNumber" type="text" placeholder="ex: 2313" style="width:75px">
         </td>
         <td>
           <input v-model="city" type="text" placeholder="ex: DEN" style="width:75px">
@@ -161,9 +171,10 @@ const numberResults = computed<number>(() => flights.value.length);
         <th>ACTUAL</th>
         <th>STATUS</th>
         <th>GATE</th>
+        <th>SYSTEM UPDATED</th>
       </tr>
       <tr v-for="flight in flights">
-        <td>{{ flight.airlineName }}</td>
+        <td>{{ flight.airlineName }} {{ getCodesharePartnersString(flight.codesharePartners) }}</td>
         <td><a :href="buildFlightAwareLink(flight.airlineIdentifier, flight.flightNumber)" target="_blank">{{ flight.airlineIdentifier }}{{ flight.flightNumber }}</a></td>
         <td>{{ flight.cityName }}-{{ flight.cityAirportName }}</td>
 
@@ -173,6 +184,7 @@ const numberResults = computed<number>(() => flights.value.length);
         <td>{{ flight.status }}</td>
 
         <td>{{ flight.airportGate }}</td>
+        <td>{{ formatTime(flight.lastUpdated) }}</td>
       </tr>
       
       </table>

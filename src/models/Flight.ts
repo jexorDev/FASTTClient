@@ -3,6 +3,7 @@ export default interface Flight {
     actualDepartureTime: Date;
     airlineIdentifier: string;
     airlineName: string;
+    codesharePartners: string[];
     airportGate: string;    
     cityAirportName: string;
     cityCode: string;
@@ -14,5 +15,5 @@ export default interface Flight {
     scheduledArrivalTime: Date;
     scheduledDepartureTime: Date;
     status: string;
-
+    lastUpdated: Date;
 }

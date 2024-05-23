@@ -2,8 +2,10 @@
 import { ref } from 'vue';
 import FlightInformationTerminal from './components/FlightInformationTerminal.vue';
 import FlightInformationTable from './components/FlightInformationTable.vue';
+import AdminTasks from "./components/AdminTasks.vue";
 
 const selection = ref(0);
+
 </script>
 
 <template>
@@ -14,10 +16,12 @@ const selection = ref(0);
       <a @click="selection = 2" :class="selection === 2 ? 'selected' : ''">[ALERTS]</a>
       <a @click="selection = 3" :class="selection === 3 ? 'selected' : ''">[STATISTICS]</a>
       <a @click="selection = 4" :class="selection === 4 ? 'selected' : ''">[HELP]</a>
+      <a @click="selection = 5" :class="selection === 5 ? 'selected' : ''">[ADMIN]</a>
     </div>
     
     <FlightInformationTerminal v-if="selection === 0"/>
     <FlightInformationTable v-if="selection === 1"/>
+    <AdminTasks v-if="selection === 5"/>
   </div>
 </template>
 

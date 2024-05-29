@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import axios from 'axios';
 import Flight from "../models/Flight.js";
 import {buildFlightAwareLink} from "../utility/FlightInfoUtility";
+import {getDateTimeFromString, formatDateTimeToString} from "../utility/DateTimeUtility";
 
 function loadFlights()  {
   loading.value = true;
@@ -24,28 +25,10 @@ function loadFlights()  {
   }).finally(() => loading.value = false);
 }
 
-function formatTime(date: Date): string {
-  if (!date) return "";
-  return new Date(date).toLocaleTimeString('en-us', { hour: "2-digit", minute: "2-digit"})
-}
-
-function getDateTimeFromString(timeString: string): Date  {
-    const timeHourString = timeString.split(":")[0];
-    const timeMinuteString = timeString.split(":")[1];
-    const timeHour = parseInt(timeHourString);
-    const timeMinute = parseInt(timeMinuteString);
-    var date = new Date(Date.now());
-    date.setHours(timeHour);
-    date.setMinutes(timeMinute);
-    date.setSeconds(0);
-
-    return date;
-}
-
 function getCodesharePartnersString(partners: string[]): string {
   const partnersJoined = partners.join(" | ");
 
-  return partnersJoined === "" ? "" : ` | ${partnersJoined}`;
+  return partnersJoined === "" ? "" : `|${partnersJoined}`;
 }
 
 const flights = ref<Flight[]>([]);
@@ -71,7 +54,7 @@ const numberResults = computed<number>(() => flights.value.length);
     <span>
 
     
-    <table style="display: inline;">
+    <table>
       <tr>
         <th>
           DISPOSITION
@@ -146,10 +129,13 @@ const numberResults = computed<number>(() => flights.value.length);
 
     </table>
 
-    <a @click="loadFlights" style="display: inline; margin-left: 5px;"  :class="loading ? 'loading-cursor': ''" >{{ loading ? 'LOADING...' : '[LOAD]' }}</a>
+    
   </span>
 
-    <div>NUMBER OF FLIGHTS: {{ numberResults }}</div>  
+    <div>
+      <div style="display: inline;">NUMBER OF FLIGHTS: {{ numberResults }}</div>  
+      <a @click="loadFlights" style="display: inline; margin-left: 15px;" :class="loading ? 'loading-cursor': ''" >{{ loading ? 'LOADING...' : '[REFRESH]' }}</a>
+    </div>
   
     <table class="flight-table">
       <tr>
@@ -174,13 +160,13 @@ const numberResults = computed<number>(() => flights.value.length);
         <td><a :href="buildFlightAwareLink(flight.airlineIdentifier, flight.flightNumber)" target="_blank">{{ flight.airlineIdentifier }}{{ flight.flightNumber }}</a></td>
         <td>{{ flight.cityName }}-{{ flight.cityAirportName }}</td>
 
-        <td>{{ formatTime(flight.disposition == 0 ? flight.scheduledArrivalTime : flight.scheduledDepartureTime) }}</td>
-        <td>{{ formatTime(flight.disposition == 0 ? flight.estimatedArrivalTime : flight.estimatedDepartureTime) }}</td>
-        <td>{{ formatTime(flight.disposition == 0 ? flight.actualArrivalTime : flight.actualDepartureTime) }}</td>
+        <td>{{ formatDateTimeToString(flight.disposition == 0 ? flight.scheduledArrivalTime : flight.scheduledDepartureTime) }}</td>
+        <td>{{ formatDateTimeToString(flight.disposition == 0 ? flight.estimatedArrivalTime : flight.estimatedDepartureTime) }}</td>
+        <td>{{ formatDateTimeToString(flight.disposition == 0 ? flight.actualArrivalTime : flight.actualDepartureTime) }}</td>
         <td>{{ flight.status }}</td>
 
         <td>{{ flight.airportGate }}</td>
-        <td>{{ formatTime(flight.lastUpdated) }}</td>
+        <td>{{ formatDateTimeToString(flight.lastUpdated) }}</td>
       </tr>
       
       </table>

@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import axios from 'axios';
+import { getDateTimeFromString } from '../utility/DateTimeUtility';
 
 const loading = ref(false);
 const status = ref("");
+
+const timeFrom = ref("00:00");
+const timeTo = ref("23:59");
 
 const day = ref(0);
 const adminPass = ref("");
@@ -18,10 +22,18 @@ function load() {
     loading.value = true;
     status.value = "";
 
+    const fromDate = getDateTimeFromString(timeFrom.value);
+    const toDate = getDateTimeFromString(timeTo.value);
+    const dateOffset = day.value;
+    
+    fromDate.setDate(fromDate.getDate() + dateOffset);
+    toDate.setDate(toDate.getDate() + dateOffset);    
+
     axios.post(`${import.meta.env.VITE_API_BASE_URL}/FlightData`,
     {
+        "fromDateTime": fromDate.toISOString(),
+        "toDateTime": toDate.toISOString(),
         "adminPassword": adminPass.value,
-        "forTomorrow": day.value === 1,
         "arrived": arrivedFlights.value,
         "scheduledArriving": arrivingFlights.value,
         "departed": departedFlights.value,
@@ -41,6 +53,11 @@ function load() {
         <input type="radio" id="tomorrow" name="day" value="1" @input="day = 1"> 
         <label for="tomorrow">Tomorrow</label>
 
+    </div>
+
+    <div>
+        <input v-model="timeFrom" type="text" placeholder="00:00" style="width:100px">
+        <input v-model="timeTo" type="text" placeholder="23:59" style="width:100px">
     </div>
 
     <div style="margin-top: 10px;">

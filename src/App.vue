@@ -6,10 +6,13 @@ import AdminTasks from "./components/AdminTasks.vue";
 import Alerts from "./components/Alerts.vue";
 
 import axios from 'axios';
+import AirlineAlert from './models/AirlineAlert';
+import { formatDateTimeToString } from './utility/DateTimeUtility';
 
 const selection = ref(0);
 let intervalId = 0;
-const alerts = ref<string[]>([]);
+const alerts = ref<AirlineAlert[]>([]);
+const currentTime = ref(new Date(Date.now()));
 
 onMounted(async () => {
   intervalId = setInterval(async() => {
@@ -20,6 +23,7 @@ onMounted(async () => {
 onBeforeUnmount(() => clearInterval(intervalId));
 
 async function pollAlerts() {
+  currentTime.value = new Date(Date.now());
 
   const from = new Date();
   const to = new Date();
@@ -40,17 +44,20 @@ const alertCount = computed<number>(() => {
 <template>
   <div class="container">
     <div>
-      <a @click="selection = 0" :class="selection === 0 ? 'selected' : ''">[TERMINAL]</a>
-      <a @click="selection = 1" :class="selection === 1 ? 'selected' : ''">[TABLE]</a>
+      
+      <a @click="selection = 1" :class="selection === 1 ? 'selected' : ''">[SEARCH]</a>
       <a @click="selection = 2" :class="selection === 2 ? 'selected' : ''">[ALERTS ({{ alertCount }})]</a>
       <a @click="selection = 3" :class="selection === 3 ? 'selected' : ''">[STATISTICS]</a>
       <a @click="selection = 4" :class="selection === 4 ? 'selected' : ''">[HELP]</a>
       <a @click="selection = 5" :class="selection === 5 ? 'selected' : ''">[ADMIN]</a>
+      <div style="float: right;">
+        <div>{{ formatDateTimeToString(currentTime) }}</div>
+      </div>
     </div>
     
     <FlightInformationTerminal v-if="selection === 0"/>
     <FlightInformationTable v-if="selection === 1"/>
-    <Alerts v-if="selection === 2" :alerts="alerts"/>
+    <Alerts v-if="selection === 2" :airlineAlerts="alerts"/>
     <AdminTasks v-if="selection === 5"/>
   </div>
 </template>

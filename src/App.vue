@@ -9,7 +9,7 @@ import axios from 'axios';
 import AirlineAlert from './models/AirlineAlert';
 import { formatDateTimeToString } from './utility/DateTimeUtility';
 
-const selection = ref(0);
+const selection = ref(1);
 let intervalId = 0;
 const alerts = ref<AirlineAlert[]>([]);
 const currentTime = ref(new Date(Date.now()));

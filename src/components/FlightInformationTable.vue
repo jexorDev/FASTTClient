@@ -31,6 +31,12 @@ function getCodesharePartnersString(partners: string[]): string {
   return partnersJoined === "" ? "" : `|${partnersJoined}`;
 }
 
+function downloadResults() {
+    const csvContent = flights.value.map(x => (x.disposition === 0 ? "ARRIVAL" : "DEPARTURE") + "," + x.airlineName + "," + x.cityName + "," + new Date(x.disposition === 0 ? x.scheduledArrivalTime : x.scheduledDepartureTime).getHours() + "," + (x.airportGate === "" ? "UNASSIGNED" : x.airportGate) + "\n");
+    const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+    window.open(encodedUri);
+  }
+
 const flights = ref<Flight[]>([]);
 const disposition = ref(1);
 const airline = ref("");
@@ -92,7 +98,7 @@ const numberResults = computed<number>(() => flights.value.length);
         </td>
         <td>
           <select v-model="dayType">
-            <option >TODAY</option>
+            <option>TODAY</option>
             <option>TOMORROW</option>
             <option>YESTERDAY</option>
           </select>
@@ -135,6 +141,7 @@ const numberResults = computed<number>(() => flights.value.length);
     <div>
       <div style="display: inline;">NUMBER OF FLIGHTS: {{ numberResults }}</div>  
       <a @click="loadFlights" style="display: inline; margin-left: 15px;" :class="loading ? 'loading-cursor': ''" >{{ loading ? 'LOADING...' : '[REFRESH]' }}</a>
+      <a @click="downloadResults" style="display: inline; margin-left: 15px;">[DOWNLOAD CSV]</a>
     </div>
   
     <table class="flight-table">
@@ -145,7 +152,7 @@ const numberResults = computed<number>(() => flights.value.length);
         <th>
           FLIGHT
         </th>
-        <th>TO/FROM</th>
+        <th>{{ disposition === 1 ? "FROM" : "TO" }}</th>
         <th>
           SCHEDULED
         </th>

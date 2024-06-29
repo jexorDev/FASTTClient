@@ -16,4 +16,5 @@ export default interface Flight {
     scheduledDepartureTime: Date;
     status: string;
     lastUpdated: Date;
+    aircraftType: string;
 }

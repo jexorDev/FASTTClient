@@ -32,7 +32,7 @@ function getCodesharePartnersString(partners: string[]): string {
 }
 
 function downloadResults() {
-    const csvContent = flights.value.map(x => (x.disposition === 0 ? "ARRIVAL" : "DEPARTURE") + "," + x.airlineName + "," + x.cityName + "," + new Date(x.disposition === 0 ? x.scheduledArrivalTime : x.scheduledDepartureTime).getHours() + "," + (x.airportGate === "" ? "UNASSIGNED" : x.airportGate) + "\n");
+    const csvContent = flights.value.map(x => (x.disposition === 0 ? "ARRIVAL" : "DEPARTURE") + "," + x.airlineName + "," + x.cityName + "," + new Date(x.disposition === 0 ? x.scheduledArrivalTime : x.scheduledDepartureTime).getHours() + "," + (x.airportGate === "" ? "UNASSIGNED" : x.airportGate) + "," + x.aircraftType + "\n");
     const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
     window.open(encodedUri);
   }

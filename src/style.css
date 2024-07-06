@@ -38,3 +38,8 @@ input[type=text] {
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
 }
+table, th, td {
+  border-style: dashed;
+  border-width: 1px;
+  border-collapse: collapse;
+}

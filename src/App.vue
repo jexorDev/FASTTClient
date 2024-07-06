@@ -4,7 +4,7 @@ import FlightInformationTerminal from './components/FlightInformationTerminal.vu
 import FlightInformationTable from './components/FlightInformationTable.vue';
 import AdminTasks from "./components/AdminTasks.vue";
 import Alerts from "./components/Alerts.vue";
-
+import Statistics from "./components/Statistics.vue";
 import axios from 'axios';
 import AirlineAlert from './models/AirlineAlert';
 import { formatDateTimeToString } from './utility/DateTimeUtility';
@@ -58,6 +58,7 @@ const alertCount = computed<number>(() => {
     <FlightInformationTerminal v-if="selection === 0"/>
     <FlightInformationTable v-if="selection === 1"/>
     <Alerts v-if="selection === 2" :airlineAlerts="alerts"/>
+    <Statistics v-if="selection === 3"></Statistics>
     <AdminTasks v-if="selection === 5"/>
   </div>
 </template>

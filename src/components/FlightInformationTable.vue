@@ -193,11 +193,7 @@ const numberResults = computed<number>(() => flights.value.length);
   width: 100%;
   height: 90%;
 }
-table, th, td {
-  border-style: dashed;
-  border-width: 1px;
-  border-collapse: collapse;
-}
+
 .previous-search {
   color: white;
   background-color: gray;

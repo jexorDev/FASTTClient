@@ -26,7 +26,7 @@ function loadFlights()  {
 }
 
 function getCodesharePartnersString(partners: string[]): string {
-  const partnersJoined = partners.join(" | ");
+  const partnersJoined = partners.join("|");
 
   return partnersJoined === "" ? "" : `|${partnersJoined}`;
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import {ref} from "vue";
+    import {ref, computed} from "vue";
 import AirlineAircraft from "../models/AirlineAircraft";
 import axios from "axios";
 import PaxVolumeHour from "../models/PaxVolumeHour";
@@ -26,10 +26,15 @@ import { getDateTimeFromString } from "../utility/DateTimeUtility";
     }
 
     async function loadPaxVolume() {
-        axios.get(`${import.meta.env.VITE_API_BASE_URL}/Statistics?fromDateTime=${getDateTimeFromString("00:00").toISOString()}&toDateTime=${getDateTimeFromString("11:59").toISOString()}`).then((response) => {        
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/Statistics?fromDateTime=${getDateTimeFromString("00:00").toISOString()}&toDateTime=${getDateTimeFromString("23:59").toISOString()}`).then((response) => {        
             paxVolumePerHour.value = response.data as PaxVolumeHour[];      
         }).finally(() => loading.value = false);
     }
+
+    const totalArrivingPax = computed(() => paxVolumePerHour.value.map(x => x.arrivingPassengers).reduce((y, acc) => acc + y, 0));
+    const totalArrivingFlights = computed(() => paxVolumePerHour.value.map(x => x.arrivingFlights).reduce((y, acc) => acc + y, 0));
+    const totalDepartingPax = computed(() => paxVolumePerHour.value.map(x => x.departingPassengers).reduce((y, acc) => acc + y, 0));
+    const totalDepartingFlights = computed(() => paxVolumePerHour.value.map(x => x.departingFlights).reduce((y, acc) => acc + y, 0));
 
 </script>
 <template>
@@ -49,6 +54,13 @@ import { getDateTimeFromString } from "../utility/DateTimeUtility";
             <td>{{ row.arrivingFlights }}</td>
             <td>{{ row.departingPassengers }}</td>
             <td>{{ row.departingFlights }}</td>
+        </tr>
+        <tr>
+            <td>TOTAL</td>
+            <td>{{totalArrivingPax}}</td>
+            <td>{{totalArrivingFlights}}</td>
+            <td>{{totalDepartingPax}}</td>
+            <td>{{totalDepartingFlights}}</td>
         </tr>
     </table>
     <h3>AIRLINE AIRCRAFTS</h3>    

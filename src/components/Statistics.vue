@@ -7,13 +7,11 @@ import { getDateTimeFromString } from "../utility/DateTimeUtility";
 
     const airlineAircrafts = ref<AirlineAircraft[]>([]);
     const loading = ref(false);
-    const airlineAircraftsLoaded = ref(false);
     const paxVolumePerHour = ref<PaxVolumeHour[]>([]);
 
     async function loadAirlineAircrafts() {
         axios.get(`${import.meta.env.VITE_API_BASE_URL}/AirlineAircrafts`).then((response) => {        
             airlineAircrafts.value = response.data as AirlineAircraft[];      
-            airlineAircraftsLoaded.value = true;
         }).finally(() => loading.value = false);
     }
 
@@ -27,19 +25,32 @@ import { getDateTimeFromString } from "../utility/DateTimeUtility";
 
     async function loadPaxVolume() {
         axios.get(`${import.meta.env.VITE_API_BASE_URL}/Statistics?fromDateTime=${getDateTimeFromString("00:00").toISOString()}&toDateTime=${getDateTimeFromString("23:59").toISOString()}`).then((response) => {        
-            paxVolumePerHour.value = response.data as PaxVolumeHour[];      
+            paxVolumePerHour.value = (response.data as PaxVolumeHour[]).sort((a, b) => getLocalHour(a.hour) -  getLocalHour(b.hour));      
         }).finally(() => loading.value = false);
+    }
+
+    function downloadPaxVolume() {
+        const csvContent = paxVolumePerHour.value.map(x => getLocalHour(x.hour) + "," + x.arrivingPassengers + "," + x.departingPassengers + "," + x.arrivingFlights + "," + x.departingFlights + "\n");
+        const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+        window.open(encodedUri);
+    }
+
+    function getLocalHour(hourUtc: number): number {
+        var dateUtc = new Date();
+        dateUtc.setUTCHours(hourUtc);
+        return dateUtc.getHours();
     }
 
     const totalArrivingPax = computed(() => paxVolumePerHour.value.map(x => x.arrivingPassengers).reduce((y, acc) => acc + y, 0));
     const totalArrivingFlights = computed(() => paxVolumePerHour.value.map(x => x.arrivingFlights).reduce((y, acc) => acc + y, 0));
     const totalDepartingPax = computed(() => paxVolumePerHour.value.map(x => x.departingPassengers).reduce((y, acc) => acc + y, 0));
     const totalDepartingFlights = computed(() => paxVolumePerHour.value.map(x => x.departingFlights).reduce((y, acc) => acc + y, 0));
-
+    
 </script>
 <template>
     <h3>PAX VOLUME</h3>    
     <a @click="loadPaxVolume()">[LOAD]</a>
+    <a @click="downloadPaxVolume()" v-show="paxVolumePerHour.length > 0">[DOWNLOAD CSV]</a>
     <table>
         <tr>
             <th>HOUR</th>
@@ -49,7 +60,7 @@ import { getDateTimeFromString } from "../utility/DateTimeUtility";
             <th>DEPARTING FLIGHTS</th>
         </tr>
         <tr v-for="row in paxVolumePerHour">
-            <td>{{ row.hour }}</td>
+            <td>{{ getLocalHour(row.hour) }}</td>
             <td>{{ row.arrivingPassengers }}</td>
             <td>{{ row.arrivingFlights }}</td>
             <td>{{ row.departingPassengers }}</td>
@@ -65,6 +76,7 @@ import { getDateTimeFromString } from "../utility/DateTimeUtility";
     </table>
     <h3>AIRLINE AIRCRAFTS</h3>    
     <a @click="loadAirlineAircrafts()">[LOAD]</a>
+    <a v-show="airlineAircrafts.length > 0" @click="saveAirlineAircrafts">[SAVE]</a>
     <table>
         <tr v-for="row in airlineAircrafts">
             <td>{{ row.airlineId }}</td>
@@ -74,5 +86,5 @@ import { getDateTimeFromString } from "../utility/DateTimeUtility";
             </td>
         </tr>
     </table>
-    <a v-show="airlineAircraftsLoaded" @click="saveAirlineAircrafts">[SAVE]</a>
+    
 </template>

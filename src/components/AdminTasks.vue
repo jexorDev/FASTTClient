@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { getDateTimeFromString } from '../utility/DateTimeUtility';
+import Airline from '../models/Airline';
 
 const loading = ref(false);
 const status = ref("");
@@ -17,6 +18,9 @@ const arrivingFlights = ref(true);
 
 const departedFlights = ref(true);
 const departingFlights = ref(true);
+
+//airlines
+const airlines = ref<Airline[]>([]);
 
 function load() {
     loading.value = true;
@@ -42,9 +46,20 @@ function load() {
         .catch((ex) => status.value = ex)
         .finally(() => loading.value = false);
 }
+
+function loadAirlines() {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/Airlines`).then((response) => airlines.value = response.data as Airline[]);
+}
+
+function saveAirlines() {
+    axios.put(`${import.meta.env.VITE_API_BASE_URL}/Airlines`, {
+        airlines: airlines.value
+    })
+}
 </script>
 <template>   
 
+    <h3>LOAD DATA</h3>
     <div style="margin-top: 10px;">
         <div>Load data for:</div>
         <input type="radio" id="today" name="day" value="0" @input="day = 0"> 
@@ -86,4 +101,28 @@ function load() {
 
     <div style="margin-top: 20px;" v-show="status">STATUS:</div>
     <div v-text="status"></div>
+
+    <h3>MANAGE AIRLINES</h3>
+    <a @click="loadAirlines()">[LOAD]</a>
+    <table>
+        <tr>
+            <th>IATA</th>
+            <th>ICAO</th>
+            <th>NAME</th>
+            <th>HIDE</th>
+        </tr>
+        <tr v-for="row in airlines">
+            <td>{{ row.iataCode }}</td>
+            <td>
+                <input type="text" v-model="row.icaoCode"/>
+            </td>
+            <td>
+                <input type="text" v-model="row.name"/>
+            </td>
+            <td>
+                <input type="checkbox" v-model="row.hide"/>
+            </td>
+        </tr>
+    </table>
+    <a v-show="airlines.length > 0" @click="saveAirlines()">[SAVE]</a>
 </template>

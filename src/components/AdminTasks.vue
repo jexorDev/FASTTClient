@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { getDateTimeFromString } from '../utility/DateTimeUtility';
 import Airline from '../models/Airline';
+import FailedFlight from '../models/FailedFlight';
 
 const loading = ref(false);
 const status = ref("");
@@ -21,6 +22,9 @@ const departingFlights = ref(true);
 
 //airlines
 const airlines = ref<Airline[]>([]);
+
+//failed flights
+const failedFlights = ref<FailedFlight[]>([]);
 
 function load() {
     loading.value = true;
@@ -56,6 +60,11 @@ function saveAirlines() {
         airlines: airlines.value
     })
 }
+
+function loadFailedFlights() {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/FailedFlights`).then((response) => failedFlights.value = response.data as FailedFlight[]);
+}
+
 </script>
 <template>   
 
@@ -104,6 +113,7 @@ function saveAirlines() {
 
     <h3>MANAGE AIRLINES</h3>
     <a @click="loadAirlines()">[LOAD]</a>
+    <a v-show="airlines.length > 0" @click="saveAirlines()">[SAVE]</a>
     <table>
         <tr>
             <th>IATA</th>
@@ -124,5 +134,19 @@ function saveAirlines() {
             </td>
         </tr>
     </table>
-    <a v-show="airlines.length > 0" @click="saveAirlines()">[SAVE]</a>
+    
+    <h3>FAILED FLIGHTS</h3>
+    <a @click="loadFailedFlights()">[LOAD]</a>
+    <table>
+        <tr>
+            <th>DATE</th>
+            <th>RAW DATA</th>
+            <th>ERROR</th>
+        </tr>
+        <tr v-for="row in failedFlights">
+            <td>{{ row.timestamp }}</td>
+            <td>{{ row.serializedFlightInfo }}</td>
+            <td>{{ row.errorMessage }}</td>
+        </tr>
+    </table>
 </template>

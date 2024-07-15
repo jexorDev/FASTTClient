@@ -26,9 +26,9 @@ function loadFlights()  {
 }
 
 function getCodesharePartnersString(partners: string[]): string {
-  const partnersJoined = partners.join("|");
+  const partnersJoined = partners.join(", ");
 
-  return partnersJoined === "" ? "" : `|${partnersJoined}`;
+  return partnersJoined === "" ? "" : ` | ${partnersJoined}`;
 }
 
 function downloadResults() {
@@ -46,7 +46,6 @@ const timeTo = ref("23:59");
 const dayType = ref("TODAY");
 const flightNumber = ref("");
 const includeCodesharePartners = ref(false);
-const problemAirlinesOnly = ref(false);
 
 const loading = ref(false);
 
@@ -84,8 +83,7 @@ const numberResults = computed<number>(() => flights.value.length);
         </th>
         <th>
           INCLUDE CODESHARE PARTNERS
-          </th>
-          <th>PROBLEM AND RESOLUTION VIEW</th>
+          </th>          
         
       </tr>
       <tr>
@@ -107,7 +105,7 @@ const numberResults = computed<number>(() => flights.value.length);
           <input v-model="flightNumber" type="text" placeholder="ex: 2313" style="width:75px">
         </td>
         <td>
-          <input v-model="city" type="text" placeholder="ex: DEN" style="width:75px">
+          <input v-model="city" type="text" placeholder="ex: DEN, DENVER" style="width:275px">
         </td>
         <td>
           <input v-model="airline" type="text" placeholder="ex: frontier, fft, f9" style="width:200px">
@@ -123,13 +121,7 @@ const numberResults = computed<number>(() => flights.value.length);
             <div style="display: inline">
               {{ includeCodesharePartners ? 'YES' : 'NO' }}
             </div>
-        </td>
-        <td>
-            <input v-model="problemAirlinesOnly" type="checkbox" style="display: inline;" />
-            <div style="display: inline">
-              {{ problemAirlinesOnly ? 'ON' : 'OFF' }}
-            </div>
-        </td>
+        </td>        
         
       </tr>
 
@@ -173,7 +165,7 @@ const numberResults = computed<number>(() => flights.value.length);
         <td>{{ flight.status }}</td>
 
         <td>{{ flight.airportGate }}</td>
-        <td>{{ formatDateTimeToString(flight.lastUpdated) }}</td>
+        <td>{{ flight.lastUpdated }}</td>
       </tr>
       
       </table>

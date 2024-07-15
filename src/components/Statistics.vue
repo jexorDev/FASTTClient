@@ -15,6 +15,12 @@ import { getDateTimeFromString } from "../utility/DateTimeUtility";
         }).finally(() => loading.value = false);
     }
 
+    async function populateAirlineAircrafts() {
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/AirlineAircrafts`).then(() => {        
+            loadAirlineAircrafts();
+        });
+    }
+
     async function saveAirlineAircrafts() {
         axios.put(`${import.meta.env.VITE_API_BASE_URL}/AirlineAircrafts`, 
             {
@@ -75,7 +81,7 @@ import { getDateTimeFromString } from "../utility/DateTimeUtility";
         </tr>
     </table>
     <h3>AIRLINE AIRCRAFTS</h3>    
-    <a @click="loadAirlineAircrafts()">[LOAD]</a>
+    <a @click="populateAirlineAircrafts()">[LOAD]</a>
     <a v-show="airlineAircrafts.length > 0" @click="saveAirlineAircrafts">[SAVE]</a>
     <table>
         <tr v-for="row in airlineAircrafts">

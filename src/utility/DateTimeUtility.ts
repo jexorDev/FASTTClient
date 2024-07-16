@@ -11,7 +11,12 @@ export function getDateTimeFromString(timeString: string): Date  {
     return date;
 }
 
-export function formatDateTimeToString(date: Date): string {
+export function formatDateTimeToString(date: Date | string): string {
     if (!date) return "";
     return new Date(date).toLocaleTimeString('en-us', { hour: "2-digit", minute: "2-digit"})
-  }
+}
+
+export function formatDateToString(date: Date | string): string {
+    if (!date) return "";
+    return new Date(date).toLocaleDateString();
+}

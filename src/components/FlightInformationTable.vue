@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import axios from 'axios';
 import Flight from "../models/Flight.js";
 import {buildFlightAwareLink} from "../utility/FlightInfoUtility";
-import {getDateTimeFromString, formatDateTimeToString} from "../utility/DateTimeUtility";
+import {getDateTimeFromString, formatDateTimeToString, formatDateToString} from "../utility/DateTimeUtility";
 
 function loadFlights()  {
   loading.value = true;
@@ -45,7 +45,7 @@ const timeFrom = ref("00:00");
 const timeTo = ref("23:59");
 const dayType = ref("TODAY");
 const flightNumber = ref("");
-const includeCodesharePartners = ref(false);
+const includeCodesharePartners = ref(true);
 
 const loading = ref(false);
 
@@ -88,10 +88,10 @@ const numberResults = computed<number>(() => flights.value.length);
       </tr>
       <tr>
         <td>
-          <input type="radio" id="arrivals" name="disposition" value="1" @input="disposition = 1"> 
+          <input type="radio" id="arrivals" name="disposition" :value="1" @input="disposition = 1"> 
           <label for="arrivals">Arrivals</label>
           
-          <input type="radio" id="departures" name="disposition" value="2" @input="disposition = 2"> 
+          <input type="radio" id="departures" name="disposition" :value="2" @input="disposition = 2"> 
           <label for="departures">Departures</label>
         </td>
         <td>
@@ -165,7 +165,7 @@ const numberResults = computed<number>(() => flights.value.length);
         <td>{{ flight.status }}</td>
 
         <td>{{ flight.airportGate }}</td>
-        <td>{{ flight.lastUpdated }}</td>
+        <td>{{ formatDateToString(flight.lastUpdated) }} {{ formatDateTimeToString(flight.lastUpdated) }}</td>
       </tr>
       
       </table>
